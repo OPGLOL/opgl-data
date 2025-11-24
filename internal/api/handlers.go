@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
-	"github.com/nathannewyen/opgl-data/internal/services"
+	"github.com/OPGLOL/opgl-data/internal/services"
 )
 
 // Handler manages HTTP request handlers for the data service

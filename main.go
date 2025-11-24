@@ -5,14 +5,14 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/nathannewyen/opgl-data/internal/api"
-	"github.com/nathannewyen/opgl-data/internal/config"
-	"github.com/nathannewyen/opgl-data/internal/services"
+	"github.com/OPGLOL/opgl-data/internal/api"
+	"github.com/OPGLOL/opgl-data/internal/config"
+	"github.com/OPGLOL/opgl-data/internal/services"
 )
 
 func main() {
 	// Load configuration
-	configuration := config.Load()
+	configuration := config.LoadConfig()
 
 	// Initialize Riot service
 	riotService := services.NewRiotService(configuration.RiotAPIKey)
@@ -24,7 +24,7 @@ func main() {
 	router := api.SetupRouter(handler)
 
 	// Start server
-	serverAddress := fmt.Sprintf(":%s", configuration.Port)
-	log.Printf("OPGL Data Service starting on port %s", configuration.Port)
+	serverAddress := fmt.Sprintf(":%s", configuration.ServerPort)
+	log.Printf("OPGL Data Service starting on port %s", configuration.ServerPort)
 	log.Fatal(http.ListenAndServe(serverAddress, router))
 }
