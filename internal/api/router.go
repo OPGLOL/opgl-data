@@ -14,6 +14,7 @@ func SetupRouter(handler *Handler) *mux.Router {
 	// Data endpoints
 	router.HandleFunc("/api/v1/summoner", handler.GetSummonerByRiotID).Methods("POST")
 	router.HandleFunc("/api/v1/matches", handler.GetMatchesByRiotID).Methods("POST")
+	router.HandleFunc("/api/v1/ranked", handler.GetRankedStats).Methods("POST")
 
 	return router
 }

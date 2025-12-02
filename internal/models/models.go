@@ -65,3 +65,19 @@ type Participant struct {
 	// Player's role in the match (TOP, JUNGLE, MID, BOT, SUPPORT)
 	TeamPosition string `json:"teamPosition"`
 }
+
+// RankedStats represents a player's ranked statistics for a specific queue
+type RankedStats struct {
+	// Queue type (RANKED_SOLO_5x5, RANKED_FLEX_SR, RANKED_TFT, etc.)
+	QueueType string `json:"queueType"`
+	// Rank tier (IRON, BRONZE, SILVER, GOLD, PLATINUM, EMERALD, DIAMOND, MASTER, GRANDMASTER, CHALLENGER)
+	Tier string `json:"tier"`
+	// Division within the tier (I, II, III, IV)
+	Rank string `json:"rank"`
+	// League points within the division (0-100)
+	LeaguePoints int `json:"leaguePoints"`
+	// Total ranked wins
+	Wins int `json:"wins"`
+	// Total ranked losses
+	Losses int `json:"losses"`
+}

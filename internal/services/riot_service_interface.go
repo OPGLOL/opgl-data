@@ -9,6 +9,7 @@ type RiotServiceInterface interface {
 	GetSummonerByPUUID(region string, puuid string) (*models.Summoner, error)
 	GetMatchHistory(region string, puuid string, count int) ([]models.Match, error)
 	GetMatchDetails(region string, matchID string) (*models.Match, error)
+	GetRankedStats(region string, encryptedSummonerID string) ([]models.RankedStats, error)
 }
 
 // Verify RiotService implements RiotServiceInterface

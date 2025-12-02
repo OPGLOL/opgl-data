@@ -115,3 +115,46 @@ func (handler *Handler) GetMatchesByRiotID(writer http.ResponseWriter, request *
 	writer.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(writer).Encode(matches)
 }
+
+// GetRankedStats handles ranked statistics requests using Riot ID with JSON body
+func (handler *Handler) GetRankedStats(writer http.ResponseWriter, request *http.Request) {
+	// Parse JSON request body
+	var rankedRequest struct {
+		Region   string `json:"region"`
+		GameName string `json:"gameName"`
+		TagLine  string `json:"tagLine"`
+	}
+
+	if err := json.NewDecoder(request.Body).Decode(&rankedRequest); err != nil {
+		http.Error(writer, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	// Validate required fields
+	if rankedRequest.Region == "" || rankedRequest.GameName == "" || rankedRequest.TagLine == "" {
+		http.Error(writer, "region, gameName, and tagLine are required", http.StatusBadRequest)
+		return
+	}
+
+	// Get summoner to obtain encrypted summoner ID
+	summoner, err := handler.riotService.GetSummonerByRiotID(rankedRequest.Region, rankedRequest.GameName, rankedRequest.TagLine)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Get ranked stats using encrypted summoner ID
+	rankedStats, err := handler.riotService.GetRankedStats(rankedRequest.Region, summoner.ID)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Return response with ranked stats array
+	response := map[string]interface{}{
+		"rankedStats": rankedStats,
+	}
+
+	writer.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(writer).Encode(response)
+}

@@ -256,3 +256,40 @@ func (riotService *RiotService) GetMatchDetails(region string, matchID string) (
 
 	return match, nil
 }
+
+// GetRankedStats retrieves ranked statistics for a summoner using their encrypted summoner ID
+// Returns stats for all ranked queues (Solo/Duo, Flex, etc.)
+func (riotService *RiotService) GetRankedStats(region string, encryptedSummonerID string) ([]models.RankedStats, error) {
+	baseURL := riotService.getRegionalURL(region)
+	path := fmt.Sprintf("/lol/league/v4/entries/by-summoner/%s", encryptedSummonerID)
+	url := riotService.buildURL(baseURL, path)
+
+	// Riot API returns an array of ranked entries (one per queue type)
+	var rawStats []struct {
+		QueueType    string `json:"queueType"`
+		Tier         string `json:"tier"`
+		Rank         string `json:"rank"`
+		LeaguePoints int    `json:"leaguePoints"`
+		Wins         int    `json:"wins"`
+		Losses       int    `json:"losses"`
+	}
+
+	if err := riotService.makeRequest(url, &rawStats); err != nil {
+		return nil, fmt.Errorf("failed to get ranked stats: %w", err)
+	}
+
+	// Convert raw stats to our model
+	rankedStats := make([]models.RankedStats, len(rawStats))
+	for i, stat := range rawStats {
+		rankedStats[i] = models.RankedStats{
+			QueueType:    stat.QueueType,
+			Tier:         stat.Tier,
+			Rank:         stat.Rank,
+			LeaguePoints: stat.LeaguePoints,
+			Wins:         stat.Wins,
+			Losses:       stat.Losses,
+		}
+	}
+
+	return rankedStats, nil
+}
